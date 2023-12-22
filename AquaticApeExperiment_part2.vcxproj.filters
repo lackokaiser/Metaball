@@ -125,9 +125,6 @@
     <Image Include="Assets\water_texture.jpg">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\danger_glass.png">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="Assets\lab_xneg.png">
       <Filter>Assets</Filter>
     </Image>
@@ -144,6 +141,24 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\lab_zpos.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\chapel_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\chapel_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\chapel_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\chapel_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\chapel_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\chapel_zpos.jpg">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

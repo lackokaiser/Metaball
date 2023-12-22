@@ -14,6 +14,7 @@ public:
 	inline glm::vec3 GetEye() const { return m_eye; }
 	inline glm::vec3 GetAt() const { return m_at; }
 	inline glm::vec3 GetWorldUp() const { return m_worldUp; }
+	inline glm::vec3 GetUp() const { return m_up; }
 
 	inline glm::mat4 GetViewMatrix() const { return m_viewMatrix; }
 	inline glm::mat4 GetProj() const { return m_matProj; }
@@ -26,7 +27,7 @@ public:
 
 	inline float GetAngle() const { return m_angle; }
 	void SetAngle( const float _angle ) noexcept;
-	inline float GetAspect() const { return m_aspect; }
+	inline float GetAspect() const { return m_windowSizeX / m_windowSizeY; }
 	void SetAspect( const float _aspect ) noexcept;
 	inline float GetZNear() const { return m_zNear; }
 	void SetZNear( const float _zn ) noexcept;
@@ -42,6 +43,10 @@ public:
 	void KeyboardUp(const SDL_KeyboardEvent& key);
 	void MouseMove(const SDL_MouseMotionEvent& mouse);
 	void MouseWheel(const SDL_MouseWheelEvent& wheel );
+
+	inline float GetWindowSizeX() const { return m_windowSizeX; }
+	inline float GetWindowSizeY() const { return m_windowSizeY; }
+	inline void UpdateWindowSize(float x, float y);
 
 private:
 	// Updates the UV.
@@ -93,18 +98,21 @@ private:
 	float	m_goRight   = 0.0f;
 	float   m_goUp      = 0.0f;
 
-	// view matrix needs recomputation
-	bool m_viewDirty = true;
-
-	// The view matrix of the camera
-	glm::mat4	m_viewMatrix;
-
 	// projection parameters
 	float m_zNear =    0.01f;
 	float m_zFar  = 1000.0f;
 
 	float m_angle = glm::radians( 27.0f );
 	float m_aspect = 640.0f / 480.0f;
+
+	float m_windowSizeX = 640.f;
+	float m_windowSizeY = 480.f;
+
+	// view matrix needs recomputation
+	bool m_viewDirty = true;
+
+	// The view matrix of the camera
+	glm::mat4	m_viewMatrix;
 
 	// projection matrix needs recomputation
 	bool m_projectionDirty = true;

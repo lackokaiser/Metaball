@@ -32,7 +32,7 @@ void Camera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _worldUp)
 	m_v = acosf( ToAim.y / m_distance );
 
 	UpdateParams();
-
+	
 	m_viewDirty = true;
 }
 
@@ -51,25 +51,25 @@ void Camera::LookAt(glm::vec3 _at)
 	SetView( m_eye, _at, m_up );
 }
 
-void Camera::SetAngle( const float _angle ) noexcept
+void Camera::SetAngle(const float _angle) noexcept
 {
 	m_angle = _angle;
 	m_projectionDirty = true;
 }
 
-void Camera::SetAspect( const float _aspect ) noexcept
+void Camera::SetAspect(const float _aspect) noexcept
 {
 	m_aspect = _aspect;
 	m_projectionDirty = true;
 }
 
-void Camera::SetZNear( const float _zn ) noexcept
+void Camera::SetZNear(const float _zn) noexcept
 {
 	m_zNear = _zn;
 	m_projectionDirty = true;
 }
 
-void Camera::SetZFar( const float _zf ) noexcept
+void Camera::SetZFar(const float _zf) noexcept
 {
 	m_zFar = _zf;
 	m_projectionDirty = true;
@@ -84,18 +84,17 @@ void Camera::Update(float _deltaTime)
 		m_at += deltaPosition;
 		m_viewDirty = true;
 	}
-
-	if ( m_viewDirty )
+	if (m_viewDirty)
 	{
-		m_viewMatrix = glm::lookAt( m_eye, m_at, m_worldUp );
+		m_viewMatrix = glm::lookAt(m_eye, m_at, m_worldUp);
 	}
 
-	if ( m_projectionDirty )
+	if (m_projectionDirty)
 	{
-		m_matProj = glm::perspective( m_angle, m_aspect, m_zNear, m_zFar );
+		m_matProj = glm::perspective(m_angle, m_aspect, m_zNear, m_zFar);
 	}
 
-	if ( m_viewDirty || m_projectionDirty )
+	if (m_viewDirty || m_projectionDirty)
 	{
 		m_matViewProj = m_matProj * m_viewMatrix;
 		m_viewDirty = false;
@@ -125,12 +124,11 @@ void Camera::UpdateParams()
 
 
 	m_eye = m_at - m_distance * lookDirection;
-	 											
+
 	m_up = m_worldUp;
-	m_right = glm::normalize( glm::cross( lookDirection, m_worldUp ) );
+	m_right = glm::normalize(glm::cross(lookDirection, m_worldUp));
 
-	m_forward = glm::cross( m_up, m_right);
-
+	m_forward = glm::cross(m_up, m_right);
 	m_viewDirty = true;
 }
 
@@ -142,6 +140,12 @@ void Camera::SetSpeed(float _val)
 void Camera::Resize(int _w, int _h)
 {
 	SetAspect( _w/(float)_h );
+	UpdateWindowSize(_w, _h);
+}
+
+void Camera::UpdateWindowSize(float x, float y) {
+	m_windowSizeX = x;
+	m_windowSizeY = y;
 }
 
 void Camera::KeyboardDown(const SDL_KeyboardEvent& key)

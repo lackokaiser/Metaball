@@ -45,7 +45,7 @@ void CMyApp::InitShaders()
 	AssembleProgram(m_metaballProgramID, "Vert_Metaball.vert", "Frag_Metaball.frag");
 
 
-	//InitSkyboxShaders();
+	InitSkyboxShaders();
 }
 
 void CMyApp::InitSkyboxShaders()
@@ -56,12 +56,9 @@ void CMyApp::InitSkyboxShaders()
 
 void CMyApp::CleanShaders()
 {
-	/*glDeleteProgram( m_programID );
-	glDeleteProgram( m_programWaterID );
-	glDeleteProgram(m_programAxesID);
-	glDeleteShader(m_trajectoryID);*/
+	//glDeleteShader(m_trajectoryID);
 	glDeleteProgram(m_metaballProgramID);
-	//CleanSkyboxShaders();
+	CleanSkyboxShaders();
 }
 
 void CMyApp::CleanSkyboxShaders()
@@ -114,10 +111,7 @@ struct Water
 void CMyApp::InitGeometry()
 {
 
-	const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
-	{
-		{ 0, offsetof( glm::vec2, x ), 2, GL_FLOAT },
-	};
+	
 
 	// Suzanne
 
@@ -125,8 +119,7 @@ void CMyApp::InitGeometry()
 
 	m_SuzanneGPU = CreateGLObjectFromMesh( suzanneMeshCPU, vertexAttribList );*/
 
-	// Skybox
-	InitSkyboxGeometry();
+	
 
 	// Water
 	/*MeshObject<glm::vec2> waterCPU;
@@ -156,9 +149,17 @@ void CMyApp::InitGeometry()
 		2,3,0
 	};*/
 
+	//const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
+	//{
+	//	{ 0, offsetof(glm::vec2, x), 2, GL_FLOAT },
+	//};
+
+	// Skybox
+	InitSkyboxGeometry();
+
 	MeshObject<glm::vec2> quadGPU;
 	{
-		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Param(), 160, 80);
+		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Param(), 160, 160);
 		for (const Vertex& v : surfaceMeshCPU.vertexArray)
 		{
 			quadGPU.vertexArray.push_back(glm::vec2(2 * v.position.x - 1, 2 * v.position.y - 1));
@@ -170,7 +171,7 @@ void CMyApp::InitGeometry()
 
 void CMyApp::CleanGeometry()
 {
-	CleanOGLObject( m_SuzanneGPU );
+	//CleanOGLObject( m_SuzanneGPU );
 	CleanOGLObject(m_quadGPU);
 	CleanSkyboxGeometry();
 }
@@ -229,7 +230,7 @@ void CMyApp::InitTextures()
 {
 	// diffuse texture
 
-	glGenTextures( 1, &m_SuzanneTextureID );
+	/*glGenTextures( 1, &m_SuzanneTextureID );
 	TextureFromFile( m_SuzanneTextureID, "Assets/wood.jpg" );
 	SetupTextureSampling( GL_TEXTURE_2D, m_SuzanneTextureID );
 
@@ -239,16 +240,16 @@ void CMyApp::InitTextures()
 
 	glGenTextures(1, &m_glassTextureID );
 	TextureFromFile(m_glassTextureID, "Assets/danger_glass.png");
-	SetupTextureSampling(GL_TEXTURE_2D, m_glassTextureID);
+	SetupTextureSampling(GL_TEXTURE_2D, m_glassTextureID);*/
 
 	InitSkyboxTextures();
 }
 
 void CMyApp::CleanTextures()
 {
-	glDeleteTextures( 1, &m_SuzanneTextureID );
+	/*glDeleteTextures( 1, &m_SuzanneTextureID );
 	glDeleteTextures( 1, &m_waterTextureID );
-	glDeleteTextures(1, &m_glassTextureID);
+	glDeleteTextures(1, &m_glassTextureID);*/
 
 	CleanSkyboxTextures();
 }
@@ -258,12 +259,12 @@ void CMyApp::InitSkyboxTextures()
 	// skybox texture
 
 	glGenTextures( 1, &m_skyboxTextureID );
-	TextureFromFile( m_skyboxTextureID, "Assets/lab_xpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X );
-	TextureFromFile( m_skyboxTextureID, "Assets/lab_xneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_X );
-	TextureFromFile( m_skyboxTextureID, "Assets/lab_ypos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Y );
-	TextureFromFile( m_skyboxTextureID, "Assets/lab_yneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y );
-	TextureFromFile( m_skyboxTextureID, "Assets/lab_zpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Z );
-	TextureFromFile( m_skyboxTextureID, "Assets/lab_zneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
+	TextureFromFile( m_skyboxTextureID, "Assets/chapel_xpos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X );
+	TextureFromFile( m_skyboxTextureID, "Assets/chapel_xneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_X );
+	TextureFromFile( m_skyboxTextureID, "Assets/chapel_ypos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Y );
+	TextureFromFile( m_skyboxTextureID, "Assets/chapel_yneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y );
+	TextureFromFile( m_skyboxTextureID, "Assets/chapel_zpos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Z );
+	TextureFromFile( m_skyboxTextureID, "Assets/chapel_zneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
 	SetupTextureSampling( GL_TEXTURE_CUBE_MAP, m_skyboxTextureID, false );
 
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -312,7 +313,7 @@ bool CMyApp::Init()
 
 	// kamera
 	m_camera.SetView(
-		glm::vec3(0.0, 7.0, 7.0),	// honnan nézzük a színteret	   - eye
+		glm::vec3(0.0, 0.0, -10.0),	// honnan nézzük a színteret	   - eye
 		glm::vec3(0.0, 0.0, 0.0),   // a színtér melyik pontját nézzük - at
 		glm::vec3(0.0, 1.0, 0.0));  // felfelé mutató irány a világban - up
 
@@ -342,17 +343,75 @@ void CMyApp::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glBindVertexArray(m_quadGPU.vaoID);
+
+	// - Textura
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxTextureID);
+
 	glUseProgram(m_metaballProgramID);
+
+	glUniform1i(ul("cubeMap"), 0);
 
 	glUniform1f(ul("time"), m_ElapsedTimeInSec);
 	glUniform1f(ul("tr"), m_tr);
 
 	GLsizei balls = static_cast<GLsizei>(m_metaBalls.size());
 
-	glUniform4fv(ul("balls"), balls, glm::value_ptr(m_metaBalls[0]));
+	if(balls > 0)
+		glUniform4fv(ul("balls"), balls, glm::value_ptr(m_metaBalls[0]));
 	glUniform1i(ul("ballCount"), balls);
 
+	GLsizei lights = static_cast<GLsizei>(m_lights.size());
+
+	if(lights > 0)
+		glUniform3fv(ul("lightPoses"), lights, glm::value_ptr(m_lights[0]));
+	glUniform1i(ul("lightCount"), lights);
+
+	glUniform3fv(ul("eye"), 1, glm::value_ptr(m_camera.GetEye()));
+	glUniform3fv(ul("at"), 1, glm::value_ptr(m_camera.GetAt()));
+	glUniform3fv(ul("up"), 1, glm::value_ptr(m_camera.GetUp()));
+
+	glUniform1f(ul("aspect"), m_camera.GetAspect());
+	glUniform1f(ul("angle"), m_camera.GetAngle());
+	glUniform1f(ul("near"), m_camera.GetZNear());
+	glUniform1f(ul("far"), m_camera.GetZFar());
+
+	glUniform1f(ul("windowSizeX"), m_camera.GetWindowSizeX());
+	glUniform1f(ul("windowSizeY"), m_camera.GetWindowSizeY());
+
+	glUniform2fv(ul("mousePos"), 1, glm::value_ptr(mousePos));
+
 	glDrawElements(GL_TRIANGLES, m_quadGPU.count, GL_UNSIGNED_INT, nullptr);
+
+	////////
+	////// skybox
+	//////
+
+	////// - VAO
+	//glBindVertexArray(m_SkyboxGPU.vaoID);
+
+
+	//// - Program
+	//glUseProgram(m_programSkyboxID);
+
+	//// - uniform parameterek
+	//glUniformMatrix4fv(ul("world"), 1, GL_FALSE, glm::value_ptr(glm::translate(m_camera.GetEye())));
+	//glUniformMatrix4fv(ul("viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
+
+	//// - textúraegységek beállítása
+	//glUniform1i(ul("skyboxTexture"), 0);
+
+	//// mentsük el az előző Z-test eredményt, azaz azt a relációt, ami alapján update-eljük a pixelt.
+	//GLint prevDepthFnc;
+	//glGetIntegerv(GL_DEPTH_FUNC, &prevDepthFnc);
+
+	//// most kisebb-egyenlőt használjunk, mert mindent kitolunk a távoli vágósíkokra
+	//glDepthFunc(GL_LEQUAL);
+
+	//// - Rajzolas
+	//glDrawElements(GL_TRIANGLES, m_SkyboxGPU.count, GL_UNSIGNED_INT, nullptr);
+
+	//glDepthFunc(prevDepthFnc);
 
 	// shader kikapcsolasa
 	glUseProgram(0);
@@ -505,38 +564,7 @@ void CMyApp::Render()
 	//glUniform3fv(ul("color"), 1, glm::value_ptr(glm::vec3(1, 0, 1)));
 
 	//glDrawArrays(GL_POINTS, 0, controlPointCount);
-	////
-	//// skybox
-	////
-
-	//// - VAO
-	//glBindVertexArray( m_SkyboxGPU.vaoID );
-
-	//// - Textura
-	//glActiveTexture( GL_TEXTURE0 );
-	//glBindTexture( GL_TEXTURE_CUBE_MAP, m_skyboxTextureID );
-
-	//// - Program
-	//glUseProgram( m_programSkyboxID );
-
-	//// - uniform parameterek
-	//glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::translate( m_camera.GetEye() ) ) );
-	//glUniformMatrix4fv( ul("viewProj"), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
-
-	//// - textúraegységek beállítása
-	//glUniform1i( ul( "skyboxTexture" ), 0 );
-
-	//// mentsük el az előző Z-test eredményt, azaz azt a relációt, ami alapján update-eljük a pixelt.
-	//GLint prevDepthFnc;
-	//glGetIntegerv(GL_DEPTH_FUNC, &prevDepthFnc);
-
-	//// most kisebb-egyenlőt használjunk, mert mindent kitolunk a távoli vágósíkokra
-	//glDepthFunc(GL_LEQUAL);
-
-	//// - Rajzolas
-	//glDrawElements( GL_TRIANGLES, m_SkyboxGPU.count, GL_UNSIGNED_INT, nullptr );
-
-	//glDepthFunc(prevDepthFnc);
+	
 
 	//// üveg
 
@@ -668,6 +696,62 @@ void CMyApp::RenderGUI()
 		}
 	}
 	ImGui::End();
+
+	if (ImGui::Begin("Lights"))
+	{
+		static int currentItem = -1;
+
+		// A listboxban megjelenítjük a pontokat
+		// Legyen a magasssága annyi, hogy MAX_POINT_COUNT elem férjen bele
+		// ImGui::GetTextLineHeightWithSpacing segítségével lekérhető egy sor magassága
+		if (ImGui::BeginListBox("Lights", ImVec2(0.0, glm::max(5, (int)m_lights.size()) * ImGui::GetTextLineHeightWithSpacing())))
+		{
+			for (int i = 0; i < static_cast<const int>(m_lights.size()); ++i)
+			{
+				const bool is_seleceted = (currentItem == i); // épp ki van-e jelölve?
+				if (ImGui::Selectable(std::to_string(i).c_str(), is_seleceted))
+				{
+					if (i == currentItem) currentItem = -1; // Ha rákattintottunk, akkor szedjük le a kijelölést
+					else currentItem = i; // Különben jelöljük ki
+				}
+
+				// technikai apróság, nem baj ha lemarad.
+				if (is_seleceted)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndListBox();
+		}
+
+		// Gombnyomásra új pontot adunk a végére
+		if (ImGui::Button("Add")) // Akkor tér vissza true-val, ha rákattintottunk
+		{
+			if (m_lights.size() < 5)
+			{
+				m_lights.push_back(glm::vec4(0, 0, 0, 1));
+				currentItem = static_cast<const int>(m_lights.size() - 1); // Az új pontot állítjuk be aktuálisnak
+			}
+		}
+
+		ImGui::SameLine();
+
+		// Gombnyomásra töröljük a kijelölt pontot
+		if (ImGui::Button("Delete"))
+		{
+			if (!m_lights.empty() && currentItem < m_lights.size() && currentItem != -1) // currentItem valid index?
+			{
+				m_lights.erase(m_lights.begin() + currentItem); // Iterátoron keresztül tudjuk törölni a kijelölt elemet
+				currentItem = -1; // Törölve lett a kijelölés
+			}
+		}
+
+		// Ha van kijelölt elem, akkor jelenítsük meg a koordinátáit
+		// és lehessen szerkeszteni
+		if (currentItem < m_lights.size() && currentItem != -1) // currentItem valid index?
+		{
+			ImGui::SliderFloat3("Coords", glm::value_ptr(m_lights[currentItem]), -10, 10);
+		}
+	}
+	ImGui::End();
 }
 
 GLint CMyApp::ul( const char* uniformName ) noexcept
@@ -719,12 +803,15 @@ void CMyApp::KeyboardUp(const SDL_KeyboardEvent& key)
 void CMyApp::MouseMove(const SDL_MouseMotionEvent& mouse)
 {
 	m_camera.MouseMove( mouse );
+	if (mouse.state & SDL_BUTTON_LMASK)
+		mousePos = glm::vec2(mousePos.x + mouse.xrel / 100.f, mousePos.y + mouse.yrel / 100.f);
 }
 
 // https://wiki.libsdl.org/SDL2/SDL_MouseButtonEvent
 
 void CMyApp::MouseDown(const SDL_MouseButtonEvent& mouse)
 {
+	
 }
 
 void CMyApp::MouseUp(const SDL_MouseButtonEvent& mouse)

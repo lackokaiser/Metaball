@@ -67,15 +67,22 @@ protected:
 	// METABALL TAGS
 
 	std::vector<glm::vec4> m_metaBalls;
+	std::vector<glm::vec3> m_lights;
 
 	// prog
 
-	float m_tr = 1;
+	float m_tr = .6f;
 	GLuint m_metaballProgramID = 0;
 	OGLObject m_quadGPU = { };
 
 	// Kamera
+	glm::vec3 eye;
+	glm::vec3 at;
+	glm::vec3 up;
+
 	Camera m_camera;
+
+	glm::vec2 mousePos;
 
 	//
 	// OpenGL-es dolgok

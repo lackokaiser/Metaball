@@ -83,6 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="MyApp.cpp" />
     <ClCompile Include="includes\SDL_GLDebugMessageCallback.cpp" />
     <ClCompile Include="main.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="includes\ObjParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LightManager.h" />
     <ClInclude Include="MyApp.h" />
     <ClInclude Include="includes\SDL_GLDebugMessageCallback.h" />
     <ClInclude Include="includes\GLUtils.hpp" />

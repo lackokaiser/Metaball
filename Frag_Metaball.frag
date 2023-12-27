@@ -1,4 +1,7 @@
 #version 430
+
+#define PI 3.1415926535897932384626433832795
+
 uniform float time;
 
 #define MAX_BALLS 5
@@ -8,6 +11,8 @@ uniform vec4 balls[MAX_BALLS];
 #define MAX_LIGHTS 3
 uniform int lightCount;
 uniform vec3 lightPoses[MAX_LIGHTS];
+uniform vec3 diffuseColors[MAX_LIGHTS];
+uniform vec3 specularColors[MAX_LIGHTS];
 
 in vec2 vs_uv;
 out vec4 fs_out_col;
@@ -35,6 +40,8 @@ uniform vec2 mousePos;
 
 mat4 viewProj;
 
+vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD);
+
 float fcr(vec3 p, vec3 c, float r) {
 	float d = distance(c, p) / r;
 
@@ -44,7 +51,7 @@ float fcr(vec3 p, vec3 c, float r) {
 		return 0; // outside 0
 	
 	float f = 2 * pow(d, 3.f) - 3.f * pow(d, 2.f) + 1;
-
+	//float f = -log(exp(d * -2)) / 2;
 	return f; // on surface
 }
 
@@ -53,20 +60,14 @@ float F(vec3 p){
 	float res = 0;
 
 	for(int i = 0; i < ballCount; i++){
-		vec4 ballPos = vec4(balls[i].xyz, 1);
-
-		res += fcr(p, ballPos.xyz, balls[i].w);
+		res += fcr(p, balls[i].xyz, balls[i].w);
 	}
 
 	return res - tr;
-
-	if(res > tr)
-		return 1;
-	return 0;
 }
 
-vec3 calculateNormal(vec3 hitPoint){
-	vec3 e = vec3(0.01f, 0.0, 0.0);
+vec3 CalculateNormal(vec3 hitPoint){
+	vec3 e = vec3(0.002f, 0.0, 0.0);
 
 	float x = F(hitPoint + e.xyy) - F(hitPoint - e.xyy);
 	float y = F(hitPoint + e.yxy) - F(hitPoint - e.yxy);
@@ -77,166 +78,196 @@ vec3 calculateNormal(vec3 hitPoint){
 	return normalize(res);
 }
 
-float ApplyShadow(vec3 point, vec3 toLight, float tMin, float tMax){
-	float res = 1;
-	float t = tMin;
-	float ph = 1e10;
+bool ApplyShadow(vec3 point, vec3 toLight, vec3 lightPos, float tMin){
+//	float res = 1;
+//	float t = tMin;
+//	float ph = 1e10;
+//
+//	for(int i = 0; i < 32; i++){
+//		float d = F(point + toLight * t); // sdf evaluation
+//
+//		float y = d*d / (2*ph); // distance from current point
+//
+//		float h = sqrt(d*d - y*y); // distance from the point to the closest distance
+//
+//		res = min(res, d / .1 * max(0, t-y));
+//		ph = d;
+//		t += d;
+//
+//		if(res < .0001 || t > tMax) // if overshot, or res is too small, than end
+//			break;
+//	}
+//	
+//	res = clamp(res, 0, 1);
+//
+//	return res*res*(3-2*res);
+	const int steps = 30;
+	float dist = tMin;
 
-	for(int i = 0; i < 32; i++){
-		float d = F(point + toLight * t); // sdf evaluation
+	float max_Distance = distance(point, lightPos);
 
-		float y = d*d / (2*ph); // distance from current point
+	vec4 hitPoint = RayMarch(point, toLight, .3, max_Distance);
 
-		float h = sqrt(d*d - y*y); // distance from the point to the closest distance
-
-		res = min(res, d / .1 * max(0, t-y));
-		ph = d;
-		t += d;
-
-		if(res < .0001 || t > tMax) // if overshot, or res is too small, than end
-			break;
-	}
-	
-	res = clamp(res, 0, 1);
-
-	return res*res*(3-2*res);
-
+	return hitPoint.w != 0;
 }
 
-vec3 Fresnel(vec3 ks, vec3 h, vec3 toLight){
-	return ks + ( 1.0 - ks ) * pow( clamp( 1.0 - dot( h, toLight ), 0.0, 1.0 ), 5.0 );
-}
 
-// light
+// Blinn-Phong shading
 vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePosition){
-	float shininess = 16.0;
 	
+	float smoothness = 20;
+	float irradiance = .4;
+
+
 	vec3 final = vec3( 0.0 );
-	
-	vec3 ref = reflect( rayDirection, pointNormal);
-    
-    vec3 Ks = vec3( 0.5 );
-    vec3 Kd = vec3( 1.0 );
 
 	for(int i = 0; i < lightCount; i++){
+		vec3 diffColor = diffuseColors[i];
+		vec3 specColor = specularColors[i];
 		vec3 lightPos = lightPoses[i];
-		vec3 light_color = vec3( 0.5 );
 
-		vec3 toLight = normalize(lightPos - point);
+		vec3 Kd = diffColor / PI;
+		vec3 Ks = specColor * ((smoothness + 8) / (PI * 8));
+		
+		vec3 halfVec = normalize(lightPos + pointNormal);
 
-		vec3 diffuse = Kd * vec3(max(0, dot(toLight, pointNormal)));
-		vec3 specular = vec3(max(0, dot(toLight, ref)));
+		float cosTi = max(dot(pointNormal, lightPos), 0);
+		float cosTh = max(dot(pointNormal, halfVec), 0);
 
-		vec3 f = Fresnel(Ks, normalize(toLight - rayDirection), toLight);
+		float lightDist = length(point - lightPos);
 
-		specular = pow(specular, vec3(shininess));
+		float multiplier = 1 / (.5 + .8 * lightDist + .2 * lightDist * lightDist);
 
-		final += light_color * mix(diffuse, specular, f);
+		if(!ApplyShadow(point, -normalize(lightPos - point), lightPos, .9))
+			final += (Kd + Ks * pow(cosTh, smoothness)) * multiplier * 2 * irradiance * cosTi;
+
+//		vec3 lightPos = lightPoses[i];
+//		vec3 light_color = vec3( 0.5 );
+//
+//		vec3 toLight = -normalize(lightPos - point);
+//
+//		vec3 diffuse = Kd * vec3(max(0, dot(toLight, pointNormal)));
+//		vec3 specular = vec3(max(0, dot(toLight, ref)));
+//
+//		vec3 f = Fresnel(Ks, normalize(toLight - rayDirection), toLight);
+//
+//		specular = pow(specular, vec3(shininess));
+//
+//		if(!ApplyShadow(point, -toLight, lightPos, 1.5))
+//			final += light_color * mix(diffuse, specular, f);
 	}
 
-	final += texture( cubeMap, ref ).rgb * Fresnel( Ks, pointNormal, -rayDirection );
+//	if(maxReflect > 0)
+//		//final += RayMarch(point, ref, .3, 30, maxReflect-1).xyz;
+//	else 
+	// * Fresnel( Ks, pointNormal, -rayDirection );
 
 	return final;
 }
 
-vec3 applyLight(vec3 lightPos, vec3 color, vec3 normal, vec3 surfPos, vec3 surfToCamera) { // phong plus shadow
-	vec3 surfaceToLight;
-    float attenuation = 1.0;
-
-	surfaceToLight = normalize(lightPos - surfPos);
-    float distanceToLight = length(lightPos - surfPos);
-    attenuation = 1.0 / (1.0 + 1 * pow(distanceToLight, 2));
-
-	//ambient
-    vec3 ambient = color.rgb;
-
-    //diffuse
-    float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
-    vec3 diffuse = diffuseCoefficient * color.rgb;
-    
-    //specular
-    float specularCoefficient = 0.0;
-    if(diffuseCoefficient > 0.0)
-        specularCoefficient = pow(max(0.0, dot(surfToCamera, reflect(-surfaceToLight, normal))), 1);
-    vec3 specular = specularCoefficient * color;
-
-    //linear color (color before gamma correction)
-    return ambient + attenuation*(diffuse + specular);
-}
-
-vec4 calculateColor(vec3 hitPoint, vec3 rayDirection, vec3 startPoint){
-// TODO lighting, shadow, etc
-
-	vec3 norm = calculateNormal(hitPoint);
-
-	vec3 color = ApplyLight(hitPoint, norm, rayDirection, startPoint);
-
-	vec3 light = vec3(1);
-
-	vec3 toLight = normalize(hitPoint - light);
-
-	float diffuse_intensity = max(0.0, dot(norm, toLight));
-
-
-	//return vec4(vec3(1.0, 0.0, 0.0) * diffuse_intensity, 1);
-	return vec4(color, 1);
-}
-
-vec4 rayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // logarithmic search, stackless
-//	int level = 0;
-//	int segment = 0;
+//vec3 applyLight(vec3 lightPos, vec3 color, vec3 normal, vec3 surfPos, vec3 surfToCamera) { // phong plus shadow
+//	vec3 surfaceToLight;
+//    float attenuation = 1.0;
 //
-//	float pixel = .005f;
+//	surfaceToLight = normalize(lightPos - surfPos);
+//    float distanceToLight = length(lightPos - surfPos);
+//    attenuation = 1.0 / (1.0 + 1 * pow(distanceToLight, 2));
 //
-//	const int maxLevel = 5;
+//	//ambient
+//    vec3 ambient = color.rgb;
 //
-//	while (true){
-//		float tle = (maxD - minD) * exp2(-float(level));
-//		float tce = minD + tle * (float(segment)+.5f);
-//		float tra = tle * .5f;
+//    //diffuse
+//    float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
+//    vec3 diffuse = diffuseCoefficient * color.rgb;
+//    
+//    //specular
+//    float specularCoefficient = 0.0;
+//    if(diffuseCoefficient > 0.0)
+//        specularCoefficient = pow(max(0.0, dot(surfToCamera, reflect(-surfaceToLight, normal))), 1);
+//    vec3 specular = specularCoefficient * color;
 //
-//		vec3 point = startPoint + tce * normalDir; 
-//
-//		float d = F(point);
-//
-//		if(d < tra){
-//			if(tra < tce * pixel || level > maxLevel){
-//				return calculateColor(point, startPoint);
-//			}
-//			else {
-//				level++;
-//				segment <<= 1;
-//			}
-//		}
-//		else {
-//			for(; (segment&1) == 1; segment >>= 1, level--);
-//			segment++;
-//
-//			if(level == 0)
-//				break;
-//		}
-//	}
-//	return vec4(0);
-	float totalDistance = 0;
+//    //linear color (color before gamma correction)
+//    return ambient + attenuation*(diffuse + specular);
+//}
 
-	const int steps = 32;
-	const float max_Distance = 1000.0;
+vec4 CalculateColor(vec3 hitPoint, vec3 rayDirection, vec3 startPoint, int maxReflect){
+	vec3 norm = CalculateNormal(hitPoint);
+
+	vec3 light = ApplyLight(hitPoint, norm, rayDirection, startPoint);
 
 
-	for(int i = 0; i < steps; i++){
-		vec3 cp = startPoint + (totalDistance * normalDir);
-
-		float closest = F(cp);
+	vec3 refStartPoint = startPoint;
+	vec4 refHitPoint = vec4(hitPoint, 1);
+	vec3 refRd = rayDirection;
+	vec3 refNorm = norm;
+	for(int i = 0; i < maxReflect; i++){
+		refRd = reflect( refRd, refNorm);
 		
-		if(closest * .003 >= 0)
-			return calculateColor(cp, normalDir, startPoint);
+		refHitPoint = RayMarch(refHitPoint.xyz, refRd, 0.3, 30);
 		
-		if(totalDistance > max_Distance)
+		if(refHitPoint.w == 0) {// no collision
+			light += texture( cubeMap, -refRd ).rgb;
 			break;
+		}
 
-		totalDistance -= closest;// optimization: move faster to targets when the minimum distance is too far
+		refNorm = CalculateNormal(refHitPoint.xyz);
+
+		vec3 reflectedLight = ApplyLight(refHitPoint.xyz, refNorm, refRd, refStartPoint);
+		
+		reflectedLight += texture(cubeMap, -refRd).rgb;
+
+		refStartPoint = refHitPoint.xyz;
+
+		light *= reflectedLight;
 	}
 
+
+//	vec3 light = vec3(1);
+//
+//	vec3 toLight = normalize(hitPoint - light);
+//
+//	float diffuse_intensity = max(0.0, dot(norm, toLight));
+//
+//
+//	return vec4(vec3(1.0, 0.0, 0.0) * diffuse_intensity, 1);
+	return vec4(light, 1);
+}
+
+// returns the hit point
+vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // binary search, stackless https://iquilezles.org/articles/binarysearchsdf/
+	int level = 0;
+	int segment = 0;
+
+	float pixel = .0005f; 
+
+	const int maxLevel = 18;
+
+	while (true){
+		float tle = (maxD - minD) * exp2(-float(level));
+		float tce = minD + tle * (float(segment)+.5f);
+		float tra = tle * .5f;
+
+		vec3 point = startPoint + tce * normalDir; 
+
+		float d = F(point);
+
+		if(d >= -tra){
+			if(tra < tce * pixel || level > maxLevel){
+				return vec4(point, 1);
+			}
+			else {
+				level++;
+				segment <<= 1;
+			}
+		}
+		else {
+			for(; (segment&1) == 1; segment >>= 1, level--);
+			segment++;
+
+			if(level == 0)
+				break;
+		}
+	}
 	return vec4(0);
 }
 
@@ -259,12 +290,12 @@ vec4 rayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // loga
 //	return view1 * view2;
 //}
 
-//mat4 CalculatePerspectiveMatrix(){
-//	return mat4(1 / aspect * tan(angle / 2), 0, 0, 0,
-//				0, 1 / tan(angle / 2), 0, 0,
-//				0, 0, -(far + near)/(far - near), -(2*near*far)/(far - near),
-//				0, 0, -1, 0);
-//}
+mat4 CalculatePerspectiveMatrix(){
+	return mat4(1 / aspect * tan(angle / 2), 0, 0, 0,
+				0, 1 / tan(angle / 2), 0, 0,
+				0, 0, -(far + near)/(far - near), -(2*near*far)/(far - near),
+				0, 0, -1, 0);
+}
 //
 //mat4 CalculateViewProjectionMatrix(){
 //	mat4 viewMat = CalculateViewMatrix();
@@ -279,16 +310,26 @@ vec4 rayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // loga
 //    return normalize(vec3(xy, -z));
 //}
 
-vec3 RayDirection(vec2 uv, vec3 rayOrigin, vec3 lookat, float zoom){
+vec3 DefaultRayDirection(vec2 uv, vec2 size, float fov){
+	vec2 pos = uv - size * .5;
+
+	float fovHalf = radians(tan((90 - fov * .5)));
+	float z = size.y * .5 * fovHalf;
+
+	return normalize(vec3(pos, -z));
+}
+
+vec3 RayDirection(vec2 uv, vec3 rayOrigin, vec3 lookat, float zoom, float fov){
 	vec3 forward = normalize(lookat - rayOrigin);
 	vec3 right = normalize(cross(up, forward));
 	vec3 up = normalize(cross(right, forward));
+
 
 	vec3 center = forward * zoom;
 
 	vec3 intersect = center + uv.x * right + uv.y * up;
 
-	return normalize(intersect);
+	return normalize(vec3(intersect));
 }
 
 mat2 RotationMX( float angle ) {
@@ -306,14 +347,14 @@ void main(){
 	ro.yz *= RotationMX(clampedMouse.y * 3.14);
 	ro.xz *= RotationMX(clampedMouse.x * 2 * 3.14);
 
-	vec3 rd = RayDirection(coord, ro, up, 2.3);
+	vec3 rd = RayDirection(coord, ro, up, 2.3, 45);
 
-    vec4 shadedColor = rayMarch(ro, rd, .3, 20);
+    vec4 hitPoint = RayMarch(ro, rd, (distance(ro, vec3(0)) - 10), (distance(ro, vec3(0)) + 10));
 
-	if(shadedColor.w == 0){
-		fs_out_col = texture(cubeMap, rd);
+	if(hitPoint.w == 0){
+		fs_out_col = texture(cubeMap, -rd);
 		return;
 	}
 	
-	fs_out_col = shadedColor;
+	fs_out_col = CalculateColor(hitPoint.xyz, rd, ro, 4);
 }

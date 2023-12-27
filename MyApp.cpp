@@ -30,40 +30,13 @@ void CMyApp::SetupDebugCallback()
 
 void CMyApp::InitShaders()
 {
-	/*m_programID = glCreateProgram();
-	AssembleProgram( m_programID, "Vert_PosNormTex.vert", "Frag_Lighting.frag" );
-	m_programWaterID = glCreateProgram();
-	AssembleProgram( m_programWaterID, "Vert_Water.vert", "Frag_Lighting.frag" );
-
-	m_programAxesID = glCreateProgram();
-	AssembleProgram(m_programAxesID, "Vert_axes.vert", "Frag_PosCol.frag");
-
-	m_trajectoryID = glCreateProgram();
-	AssembleProgram(m_trajectoryID, "Vert_traj.vert", "Frag_PosCol.frag");*/
-
 	m_metaballProgramID = glCreateProgram();
 	AssembleProgram(m_metaballProgramID, "Vert_Metaball.vert", "Frag_Metaball.frag");
-
-
-	InitSkyboxShaders();
-}
-
-void CMyApp::InitSkyboxShaders()
-{
-	m_programSkyboxID = glCreateProgram();
-	AssembleProgram( m_programSkyboxID, "Vert_skybox.vert", "Frag_skybox.frag" );
 }
 
 void CMyApp::CleanShaders()
 {
-	//glDeleteShader(m_trajectoryID);
 	glDeleteProgram(m_metaballProgramID);
-	CleanSkyboxShaders();
-}
-
-void CMyApp::CleanSkyboxShaders()
-{
-	glDeleteProgram( m_programSkyboxID );
 }
 
 struct Param
@@ -110,53 +83,6 @@ struct Water
 
 void CMyApp::InitGeometry()
 {
-
-	
-
-	// Suzanne
-
-	/*MeshObject<Vertex> suzanneMeshCPU = ObjParser::parse("Assets/Suzanne.obj");
-
-	m_SuzanneGPU = CreateGLObjectFromMesh( suzanneMeshCPU, vertexAttribList );*/
-
-	
-
-	// Water
-	/*MeshObject<glm::vec2> waterCPU;
-	{
-		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh( Param(), 160, 80 );
-		for ( const Vertex& v : surfaceMeshCPU.vertexArray )
-		{
-			waterCPU.vertexArray.emplace_back( glm::vec2( v.position.x, v.position.y ) );
-		}
-		waterCPU.indexArray = surfaceMeshCPU.indexArray;
-	}
-	m_waterGPU = CreateGLObjectFromMesh( waterCPU, { { 0, offsetof( glm::vec2,x), 2, GL_FLOAT}});*/
-
-	// quad
-
-	/*MeshObject<glm::vec2> quadMeshCPU;
-
-	quadMeshCPU.vertexArray = {
-		glm::vec2(-1, -1),
-		glm::vec2(1, -1),
-		glm::vec2(1, 1),
-		glm::vec2(-1, 1),
-	};
-
-	quadMeshCPU.indexArray = {
-		0, 1, 2,
-		2,3,0
-	};*/
-
-	//const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
-	//{
-	//	{ 0, offsetof(glm::vec2, x), 2, GL_FLOAT },
-	//};
-
-	// Skybox
-	InitSkyboxGeometry();
-
 	MeshObject<glm::vec2> quadGPU;
 	{
 		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Param(), 160, 160);
@@ -171,86 +97,16 @@ void CMyApp::InitGeometry()
 
 void CMyApp::CleanGeometry()
 {
-	//CleanOGLObject( m_SuzanneGPU );
 	CleanOGLObject(m_quadGPU);
-	CleanSkyboxGeometry();
-}
-
-void CMyApp::InitSkyboxGeometry()
-{
-	// skybox geo
-	MeshObject<glm::vec3> skyboxCPU =
-	{
-		std::vector<glm::vec3>
-		{
-			// hátsó lap
-			glm::vec3(-1, -1, -1),
-			glm::vec3( 1, -1, -1),
-			glm::vec3( 1,  1, -1),
-			glm::vec3(-1,  1, -1),
-			// elülső lap
-			glm::vec3(-1, -1, 1),
-			glm::vec3( 1, -1, 1),
-			glm::vec3( 1,  1, 1),
-			glm::vec3(-1,  1, 1),
-		},
-
-		std::vector<GLuint>
-		{
-			// hátsó lap
-			0, 1, 2,
-			2, 3, 0,
-			// elülső lap
-			4, 6, 5,
-			6, 4, 7,
-			// bal
-			0, 3, 4,
-			4, 3, 7,
-			// jobb
-			1, 5, 2,
-			5, 6, 2,
-			// alsó
-			1, 0, 4,
-			1, 4, 5,
-			// felső
-			3, 2, 6,
-			3, 6, 7,
-		}
-	};
-
-	m_SkyboxGPU = CreateGLObjectFromMesh( skyboxCPU, { { 0, offsetof( glm::vec3,x ), 3, GL_FLOAT } } );
-}
-
-void CMyApp::CleanSkyboxGeometry()
-{
-	CleanOGLObject( m_SkyboxGPU );
 }
 
 void CMyApp::InitTextures()
 {
-	// diffuse texture
-
-	/*glGenTextures( 1, &m_SuzanneTextureID );
-	TextureFromFile( m_SuzanneTextureID, "Assets/wood.jpg" );
-	SetupTextureSampling( GL_TEXTURE_2D, m_SuzanneTextureID );
-
-	glGenTextures( 1, &m_waterTextureID );
-	TextureFromFile( m_waterTextureID, "Assets/water_texture.jpg" );
-	SetupTextureSampling( GL_TEXTURE_2D, m_waterTextureID );
-
-	glGenTextures(1, &m_glassTextureID );
-	TextureFromFile(m_glassTextureID, "Assets/danger_glass.png");
-	SetupTextureSampling(GL_TEXTURE_2D, m_glassTextureID);*/
-
 	InitSkyboxTextures();
 }
 
 void CMyApp::CleanTextures()
 {
-	/*glDeleteTextures( 1, &m_SuzanneTextureID );
-	glDeleteTextures( 1, &m_waterTextureID );
-	glDeleteTextures(1, &m_glassTextureID);*/
-
 	CleanSkyboxTextures();
 }
 
@@ -317,8 +173,14 @@ bool CMyApp::Init()
 		glm::vec3(0.0, 0.0, 0.0),   // a színtér melyik pontját nézzük - at
 		glm::vec3(0.0, 1.0, 0.0));  // felfelé mutató irány a világban - up
 
-	m_metaBalls.push_back(glm::vec4(1, 0, 0, 1));
-	m_metaBalls.push_back(glm::vec4(-1, 0, 0, 1));
+	m_metaBalls.push_back(glm::vec4(2, 0, 1, 1));
+	m_metaBalls.push_back(glm::vec4(-3, 2, 0, 2));
+	m_metaBalls.push_back(glm::vec4(-1, -3, -2, 1.5));
+	m_metaBalls.push_back(glm::vec4(1, -1, 0, 1.9));
+	m_metaBalls.push_back(glm::vec4(1, -2, 3, 1.9));
+
+	m_lights.AddLight(glm::vec3(1, 1, 2), glm::vec3(1, 0, 0), glm::vec3(.5));
+	m_lights.AddLight(-glm::vec3(2, 1, 1), glm::vec3(0, 0, 1), glm::vec3(.5));
 
 	return true;
 }
@@ -330,10 +192,24 @@ void CMyApp::Clean()
 	CleanTextures();
 }
 
+void CMyApp::updateAnimation() {
+	m_metaBallsAnimated.clear();
+	for (int i = 0; i < m_metaBalls.size(); i++) {
+		glm::vec4 ball = glm::vec4(m_metaBalls[i].x + 0.5f * (i % 2 == 0 ? cosf(m_ElapsedTimeInSec * 5 / (2 + i)) : (2 + i * 2) * sinf(m_ElapsedTimeInSec * 6 / (2 + i))),
+			m_metaBalls[i].y + i % 2 == 0 ? 3 * sinf(m_ElapsedTimeInSec * 6 / (2 + i)) : 4* cosf(m_ElapsedTimeInSec * 4 / (2 + i)),
+			m_metaBalls[i].z + i % 2 == 0 ? cosf(m_ElapsedTimeInSec * 7 / (3 + i)) : 1 - sinf(m_ElapsedTimeInSec * 3 / (2 + i)),
+			(cosf(m_ElapsedTimeInSec) + 2) * .5 + m_metaBalls[i].w);
+
+		m_metaBallsAnimated.push_back(ball);
+	}
+}
+
 void CMyApp::Update( const SUpdateInfo& updateInfo )
 {
 	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
 	m_camera.Update(updateInfo.DeltaTimeInSec);
+	if(!m_animationPaused)
+		updateAnimation();
 }
 
 void CMyApp::Render()
@@ -355,16 +231,20 @@ void CMyApp::Render()
 	glUniform1f(ul("time"), m_ElapsedTimeInSec);
 	glUniform1f(ul("tr"), m_tr);
 
-	GLsizei balls = static_cast<GLsizei>(m_metaBalls.size());
+	GLsizei balls = static_cast<GLsizei>(m_metaBallsAnimated.size());
 
 	if(balls > 0)
-		glUniform4fv(ul("balls"), balls, glm::value_ptr(m_metaBalls[0]));
+		glUniform4fv(ul("balls"), balls, glm::value_ptr(m_metaBallsAnimated[0]));
 	glUniform1i(ul("ballCount"), balls);
 
-	GLsizei lights = static_cast<GLsizei>(m_lights.size());
+	GLsizei lights = static_cast<GLsizei>(m_lights.GetSize());
 
-	if(lights > 0)
-		glUniform3fv(ul("lightPoses"), lights, glm::value_ptr(m_lights[0]));
+	if(lights > 0) {
+		glUniform3fv(ul("lightPoses"), lights, glm::value_ptr(*m_lights.GetLightPosesPointer()));
+		glUniform3fv(ul("diffuseColors"), lights, glm::value_ptr(*m_lights.GetDiffuseColorPointer()));
+		glUniform3fv(ul("specularColors"), lights, glm::value_ptr(*m_lights.GetSpecularColorPointer()));
+
+	}
 	glUniform1i(ul("lightCount"), lights);
 
 	glUniform3fv(ul("eye"), 1, glm::value_ptr(m_camera.GetEye()));
@@ -383,271 +263,27 @@ void CMyApp::Render()
 
 	glDrawElements(GL_TRIANGLES, m_quadGPU.count, GL_UNSIGNED_INT, nullptr);
 
-	////////
-	////// skybox
-	//////
-
-	////// - VAO
-	//glBindVertexArray(m_SkyboxGPU.vaoID);
-
-
-	//// - Program
-	//glUseProgram(m_programSkyboxID);
-
-	//// - uniform parameterek
-	//glUniformMatrix4fv(ul("world"), 1, GL_FALSE, glm::value_ptr(glm::translate(m_camera.GetEye())));
-	//glUniformMatrix4fv(ul("viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
-
-	//// - textúraegységek beállítása
-	//glUniform1i(ul("skyboxTexture"), 0);
-
-	//// mentsük el az előző Z-test eredményt, azaz azt a relációt, ami alapján update-eljük a pixelt.
-	//GLint prevDepthFnc;
-	//glGetIntegerv(GL_DEPTH_FUNC, &prevDepthFnc);
-
-	//// most kisebb-egyenlőt használjunk, mert mindent kitolunk a távoli vágósíkokra
-	//glDepthFunc(GL_LEQUAL);
-
-	//// - Rajzolas
-	//glDrawElements(GL_TRIANGLES, m_SkyboxGPU.count, GL_UNSIGNED_INT, nullptr);
-
-	//glDepthFunc(prevDepthFnc);
-
-	// shader kikapcsolasa
 	glUseProgram(0);
 
-	// - Textúrák kikapcsolása, minden egységre külön
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	// VAO kikapcsolása
 	glBindVertexArray(0);
-
-	//// Suzanne
-
-	//glBindVertexArray( m_SuzanneGPU.vaoID );
-
-	//// - Textúrák beállítása, minden egységre külön
-	//glActiveTexture( GL_TEXTURE0 );
-	//glBindTexture( GL_TEXTURE_2D, m_SuzanneTextureID );
-
-
-	//glUseProgram( m_programID );
-
-	//// - uniform parameterek beállítása
-	//glm::vec3 suzanneForward = EvaluatePathTangent(); // Merre nézzen a Suzanne?
-	//glm::vec3 suzanneWorldUp = glm::vec3(0, 1, 0);
-	//if (fabsf(suzanneForward.y) > 0.99) {
-	//	suzanneWorldUp = glm::vec3(1, 0, 0);
-	//}
-	//glm::vec3 suzanneRight = glm::normalize(glm::cross(suzanneForward, suzanneWorldUp)); // Jobbra nézése
-	//glm::vec3 suzanneUp = glm::cross(suzanneRight, suzanneForward); // Felfelé nézése
-
-	//// A három vektorból álló bázisvektorokat egy mátrixba rendezzük, hogy tudjuk velük forgatni a Suzanne-t
-	//glm::mat4 suzanneRot(1.0f);
-	//suzanneRot[0] = glm::vec4(suzanneForward, 0.0f);
-	//suzanneRot[1] = glm::vec4(     suzanneUp, 0.0f);
-	//suzanneRot[2] = glm::vec4(  suzanneRight, 0.0f);
-
-	//// A Suzanne alapállásban a Z tengelyre néz, de nekünk az X tengelyre kell, ezért elforgatjuk
-	//static const glm::mat4 suzanneTowardX = glm::rotate(glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
-
-	//glm::mat4 matWorld = glm::translate(EvaluatePathPosition()) * suzanneRot * suzanneTowardX;
-
-	//glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
-	//glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
-
-	//glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
-
-	//// - Fényforrások beállítása
-	//glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( m_camera.GetEye() ) );
-	//glUniform4fv( ul( "lightPos" ),  1, glm::value_ptr( m_lightPos ) );
-
-	//glUniform3fv( ul( "La" ),		 1, glm::value_ptr( m_La ) );
-	//glUniform3fv( ul( "Ld" ),		 1, glm::value_ptr( m_Ld ) );
-	//glUniform3fv( ul( "Ls" ),		 1, glm::value_ptr( m_Ls ) );
-
-	//glUniform1f( ul( "lightConstantAttenuation"	 ), m_lightConstantAttenuation );
-	//glUniform1f( ul( "lightLinearAttenuation"	 ), m_lightLinearAttenuation   );
-	//glUniform1f( ul( "lightQuadraticAttenuation" ), m_lightQuadraticAttenuation);
-
-	//// - Anyagjellemzők beállítása
-	//glUniform3fv( ul( "Ka" ),		 1, glm::value_ptr( m_Ka ) );
-	//glUniform3fv( ul( "Kd" ),		 1, glm::value_ptr( m_Kd ) );
-	//glUniform3fv( ul( "Ks" ),		 1, glm::value_ptr( m_Ks ) );
-
-	//glUniform1f( ul( "Shininess" ),	m_Shininess );
-
-
-	//// - textúraegységek beállítása
-	//glUniform1i( ul( "texImage" ), 0 );
-
-	//glDrawElements( GL_TRIANGLES,    
-	//				m_SuzanneGPU.count,			 
-	//				GL_UNSIGNED_INT,
-	//				nullptr );
-
-	//
-	//// Viz
-
-	//glBindVertexArray( m_waterGPU.vaoID );
-
-	//// - Textúrák beállítása, minden egységre külön
-	//glActiveTexture( GL_TEXTURE0 );
-	//glBindTexture( GL_TEXTURE_2D, m_waterTextureID );
-
-	//glUseProgram( m_programWaterID );
-	//
-	//matWorld = glm::translate(glm::vec3(0, -2, 0));
-
-	//// Mivel másik shader-t használunk, ezért újra be kell állítani a uniform paramétereket
-	//glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
-	//glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
-
-	//glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
-
-	//// - Fényforrások beállítása
-	//glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( m_camera.GetEye() ) );
-	//glUniform4fv( ul( "lightPos" ),  1, glm::value_ptr( m_lightPos ) );
-
-	//glUniform3fv( ul( "La" ),		 1, glm::value_ptr( m_La ) );
-	//glUniform3fv( ul( "Ld" ),		 1, glm::value_ptr( m_Ld ) );
-	//glUniform3fv( ul( "Ls" ),		 1, glm::value_ptr( m_Ls ) );
-
-	//glUniform1f( ul( "lightConstantAttenuation"	 ), m_lightConstantAttenuation );
-	//glUniform1f( ul( "lightLinearAttenuation"	 ), m_lightLinearAttenuation   );
-	//glUniform1f( ul( "lightQuadraticAttenuation" ), m_lightQuadraticAttenuation);
-
-	//// - Anyagjellemzők beállítása
-	//glUniform3fv( ul( "Ka" ),		 1, glm::value_ptr( m_Ka ) );
-	//glUniform3fv( ul( "Kd" ),		 1, glm::value_ptr( m_Kd ) );
-	//glUniform3fv( ul( "Ks" ),		 1, glm::value_ptr( m_Ks ) );
-
-	//glUniform1f( ul( "Shininess" ),	m_Shininess );
-
-	//glUniform1f( ul( "ElapsedTimeInSec" ),	m_ElapsedTimeInSec );
-
-	//glDrawElements( GL_TRIANGLES,    
-	//				m_waterGPU.count,			 
-	//				GL_UNSIGNED_INT,
-	//				nullptr );
-
-	//// Tengely
-
-	//glBindVertexArray(0);
-
-	//glUseProgram(m_programAxesID);
-
-	//glUniformMatrix4fv(ul("world"), 1, GL_FALSE, glm::value_ptr(glm::identity<glm::mat4>()));
-	//glUniformMatrix4fv(ul("viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
-
-	//glDrawArrays(GL_LINES, 0, 6);
-
-
-	//// trajectory
-
-	//glBindVertexArray(0);
-	//glUseProgram(m_trajectoryID);
-
-	//glUniformMatrix4fv(ul("world"), 1, GL_FALSE, glm::value_ptr(glm::identity<glm::mat4>()));
-	//glUniformMatrix4fv(ul("viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
-
-	//glUniform3fv(ul("color"), 1, glm::value_ptr(glm::vec3(1, 0, 0)));
-
-	//GLsizei controlPointCount = static_cast<GLsizei>(m_controlPoints.size());
-
-	//glUniform3fv(ul("positions"), controlPointCount, glm::value_ptr(m_controlPoints[0]));
-
-	//glDrawArrays(GL_LINE_STRIP, 0, controlPointCount);
-
-	//glUniform3fv(ul("color"), 1, glm::value_ptr(glm::vec3(1, 0, 1)));
-
-	//glDrawArrays(GL_POINTS, 0, controlPointCount);
-	
-
-	//// üveg
-
-	//glBindVertexArray(m_quadGPU.vaoID);
-
-	//glUseProgram(m_programID);
-
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, m_glassTextureID);
-
-	//matWorld = glm::translate(glm::vec3(0, 0, 15)) * glm::scale(glm::vec3(15, 7.5, 15));
-
-	//glUniformMatrix4fv(ul("world"), 1, GL_FALSE, glm::value_ptr(matWorld));
-
-	//glDisable(GL_CULL_FACE);
-	//glEnable(GL_BLEND);
-
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glDrawElements(GL_TRIANGLES, m_quadGPU.count, GL_UNSIGNED_INT, nullptr);
-
-	//glDisable(GL_BLEND);
-	//glEnable(GL_CULL_FACE);
-
-	
 }
 
 void CMyApp::RenderGUI()
 {
-	//ImGui::ShowDemoWindow();
-	//if ( ImGui::Begin( "Lighting settings" ) )
-	//{		
-	//	ImGui::InputFloat("Shininess", &m_Shininess, 0.1f, 1.0f, "%.1f" );
-	//	static float Kaf = 1.0f;
-	//	static float Kdf = 1.0f;
-	//	static float Ksf = 1.0f;
-	//	if ( ImGui::SliderFloat( "Ka", &Kaf, 0.0f, 1.0f ) )
-	//	{
-	//		m_Ka = glm::vec3( Kaf );
-	//	}
-	//	if ( ImGui::SliderFloat( "Kd", &Kdf, 0.0f, 1.0f ) )
-	//	{
-	//		m_Kd = glm::vec3( Kdf );
-	//	}
-	//	if ( ImGui::SliderFloat( "Ks", &Ksf, 0.0f, 1.0f ) )
-	//	{
-	//		m_Ks = glm::vec3( Ksf );
-	//	}
-
-	//	{
-	//		static glm::vec2 lightPosXZ = glm::vec2( 0.0f );
-	//		lightPosXZ = glm::vec2( m_lightPos.x, m_lightPos.z );
-	//		if ( ImGui::SliderFloat2( "Light Position XZ", glm::value_ptr( lightPosXZ ), -1.0f, 1.0f ) )
-	//		{
-	//			float lightPosL2 = lightPosXZ.x * lightPosXZ.x + lightPosXZ.y * lightPosXZ.y;
-	//			if ( lightPosL2 > 1.0f ) // Ha kívülre esne a körön, akkor normalizáljuk
-	//			{
-	//				lightPosXZ /= sqrtf( lightPosL2 );
-	//				lightPosL2 = 1.0f;
-	//			}
-
-	//			m_lightPos.x = lightPosXZ.x;
-	//			m_lightPos.z = lightPosXZ.y;
-	//			m_lightPos.y = sqrtf( 1.0f - lightPosL2 );
-	//		}
-	//		ImGui::LabelText( "Light Position Y", "%f", m_lightPos.y );
-	//	}
-	//}
-	//ImGui::End();
-
 	if ( ImGui::Begin( "Metaballs" ) )
 	{
-		// A paramétert szabályozó csúszka
 		ImGui::SliderFloat("TR parameter", &m_tr, 0, 1.0f);
+		ImGui::Checkbox("Animation Paused", &m_animationPaused);
 
 		ImGui::SeparatorText("Metaballs Array");
 		
-		// A kijelölt pont indexe
-		// Lehetne a CMyApp tagváltozója is, de mivel csak a GUI-hoz kell, ezért elégséges lokális, de statikus változónak lennie
 		static int currentItem = -1;
 
-		// A listboxban megjelenítjük a pontokat
-		// Legyen a magasssága annyi, hogy MAX_POINT_COUNT elem férjen bele
-		// ImGui::GetTextLineHeightWithSpacing segítségével lekérhető egy sor magassága
 		if (ImGui::BeginListBox("Metaballs Array", ImVec2(0.0, glm::max(5, (int) m_metaBalls.size()) * ImGui::GetTextLineHeightWithSpacing())))
 		{
 			for ( int i = 0; i < static_cast<const int>( m_metaBalls.size() ); ++i )
@@ -659,15 +295,13 @@ void CMyApp::RenderGUI()
 					else currentItem = i; // Különben jelöljük ki
 				}
 
-				// technikai apróság, nem baj ha lemarad.
 				if ( is_seleceted )
                     ImGui::SetItemDefaultFocus();
 			}
 			ImGui::EndListBox(); 
 		}
 
-		// Gombnyomásra új pontot adunk a végére
-		if (ImGui::Button("Add")) // Akkor tér vissza true-val, ha rákattintottunk
+		if (ImGui::Button("Add"))
 		{
 			if ( m_metaBalls.size() < 5 )
 			{
@@ -678,7 +312,6 @@ void CMyApp::RenderGUI()
 
 		ImGui::SameLine();
 
-		// Gombnyomásra töröljük a kijelölt pontot
 		if (ImGui::Button("Delete") )
 		{
 			if ( !m_metaBalls.empty() && currentItem < m_metaBalls.size() && currentItem != -1 ) // currentItem valid index?
@@ -688,8 +321,6 @@ void CMyApp::RenderGUI()
 			}
 		}
 
-		// Ha van kijelölt elem, akkor jelenítsük meg a koordinátáit
-		// és lehessen szerkeszteni
 		if ( currentItem < m_metaBalls.size() && currentItem != -1 ) // currentItem valid index?
 		{
 			ImGui::SliderFloat3("Coords", glm::value_ptr(m_metaBalls[currentItem]), -10, 10);
@@ -701,12 +332,9 @@ void CMyApp::RenderGUI()
 	{
 		static int currentItem = -1;
 
-		// A listboxban megjelenítjük a pontokat
-		// Legyen a magasssága annyi, hogy MAX_POINT_COUNT elem férjen bele
-		// ImGui::GetTextLineHeightWithSpacing segítségével lekérhető egy sor magassága
-		if (ImGui::BeginListBox("Lights", ImVec2(0.0, glm::max(5, (int)m_lights.size()) * ImGui::GetTextLineHeightWithSpacing())))
+		if (ImGui::BeginListBox("Lights", ImVec2(0.0, glm::max(m_lights.GetMax(), (int)m_lights.GetSize()) * ImGui::GetTextLineHeightWithSpacing())))
 		{
-			for (int i = 0; i < static_cast<const int>(m_lights.size()); ++i)
+			for (int i = 0; i < static_cast<const int>(m_lights.GetSize()); ++i)
 			{
 				const bool is_seleceted = (currentItem == i); // épp ki van-e jelölve?
 				if (ImGui::Selectable(std::to_string(i).c_str(), is_seleceted))
@@ -715,40 +343,37 @@ void CMyApp::RenderGUI()
 					else currentItem = i; // Különben jelöljük ki
 				}
 
-				// technikai apróság, nem baj ha lemarad.
 				if (is_seleceted)
 					ImGui::SetItemDefaultFocus();
 			}
 			ImGui::EndListBox();
 		}
 
-		// Gombnyomásra új pontot adunk a végére
-		if (ImGui::Button("Add")) // Akkor tér vissza true-val, ha rákattintottunk
+		if (ImGui::Button("Add"))
 		{
-			if (m_lights.size() < 5)
+			if (m_lights.GetSize() < 5)
 			{
-				m_lights.push_back(glm::vec4(0, 0, 0, 1));
-				currentItem = static_cast<const int>(m_lights.size() - 1); // Az új pontot állítjuk be aktuálisnak
+				m_lights.AddLight(glm::vec3(0, 0, 0), glm::vec3(.5), glm::vec3(.5));
+				currentItem = static_cast<const int>(m_lights.GetSize() - 1);
 			}
 		}
 
 		ImGui::SameLine();
 
-		// Gombnyomásra töröljük a kijelölt pontot
 		if (ImGui::Button("Delete"))
 		{
-			if (!m_lights.empty() && currentItem < m_lights.size() && currentItem != -1) // currentItem valid index?
+			if (m_lights.GetSize() != 0 && currentItem < m_lights.GetSize() && currentItem != -1) 
 			{
-				m_lights.erase(m_lights.begin() + currentItem); // Iterátoron keresztül tudjuk törölni a kijelölt elemet
-				currentItem = -1; // Törölve lett a kijelölés
+				m_lights.RemoveLight(currentItem); 
+				currentItem = -1;
 			}
 		}
 
-		// Ha van kijelölt elem, akkor jelenítsük meg a koordinátáit
-		// és lehessen szerkeszteni
-		if (currentItem < m_lights.size() && currentItem != -1) // currentItem valid index?
+		if (currentItem < m_lights.GetSize() && currentItem != -1)
 		{
-			ImGui::SliderFloat3("Coords", glm::value_ptr(m_lights[currentItem]), -10, 10);
+			ImGui::SliderFloat3("Coords", glm::value_ptr(*m_lights.GetLightAt(currentItem)), -10, 10);
+			ImGui::ColorPicker3("Diffuse Color", glm::value_ptr(*m_lights.GetDiffuseAt(currentItem)));
+			ImGui::ColorPicker3("Specular Color", glm::value_ptr(*m_lights.GetSpecularAt(currentItem)));
 		}
 	}
 	ImGui::End();
@@ -831,40 +456,4 @@ void CMyApp::Resize(int _w, int _h)
 {
 	glViewport(0, 0, _w, _h);
 	m_camera.Resize( _w, _h );
-}
-
-// Pozíció kiszámítása a kontrollpontok alapján
-glm::vec3 CMyApp::EvaluatePathPosition() const
-{
-	if (m_controlPoints.size() == 0) // Ha nincs pont, akkor visszaadjuk az origót
-		return glm::vec3(0);
-
-	const int interval = (const int)m_currentParam; // Melyik két pont között vagyunk?
-
-	if (interval < 0) // Ha a paraméter negatív, akkor a kezdőpontot adjuk vissza
-		return m_controlPoints[0];
-
-	if (interval >= m_controlPoints.size() - 1) // Ha a paraméter nagyobb, mint a pontok száma, akkor az utolsó pontot adjuk vissza
-		return m_controlPoints[m_controlPoints.size() - 1];
-
-	float localT = m_currentParam - interval; // A paramétert normalizáljuk az aktuális intervallumra
-	
-	return glm::mix( m_controlPoints[interval], m_controlPoints[interval + 1], localT ); // Lineárisan interpolálunk a két kontrollpont között
-}
-
-// Tangens kiszámítása a kontrollpontok alapján
-glm::vec3 CMyApp::EvaluatePathTangent() const
-{
-	if (m_controlPoints.size() < 2) // Ha nincs elég pont az interpolációhoy, akkor visszaadjuk az x tengelyt
-		return glm::vec3(1.0,0.0,0.0);
-
-	int interval = (int)m_currentParam; // Melyik két pont között vagyunk?
-
-	if (interval < 0) // Ha a paraméter negatív, akkor a kezdő intervallumot adjuk vissza
-		interval = 0;
-
-	if (interval >= m_controlPoints.size() - 1) // Ha a paraméter nagyobb, mint az intervallumok száma, akkor az utolsót adjuk vissza
-		interval = static_cast<int>( m_controlPoints.size() - 2 );
-
-	return glm::normalize(m_controlPoints[interval + 1] - m_controlPoints[interval]);
 }

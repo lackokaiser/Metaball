@@ -16,10 +16,6 @@ public:
 	inline glm::vec3 GetWorldUp() const { return m_worldUp; }
 	inline glm::vec3 GetUp() const { return m_up; }
 
-	inline glm::mat4 GetViewMatrix() const { return m_viewMatrix; }
-	inline glm::mat4 GetProj() const { return m_matProj; }
-	inline glm::mat4 GetViewProj() const { return m_matViewProj; }
-
 	void Update(float _deltaTime);
 
 	void SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up);
@@ -107,20 +103,5 @@ private:
 
 	float m_windowSizeX = 640.f;
 	float m_windowSizeY = 480.f;
-
-	// view matrix needs recomputation
-	bool m_viewDirty = true;
-
-	// The view matrix of the camera
-	glm::mat4	m_viewMatrix;
-
-	// projection matrix needs recomputation
-	bool m_projectionDirty = true;
-
-	// projection matrix
-	glm::mat4	m_matProj;
-
-	// Combined view-projection matrix of the camera
-	glm::mat4	m_matViewProj;
 };
 

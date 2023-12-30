@@ -32,8 +32,6 @@ void Camera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _worldUp)
 	m_v = acosf( ToAim.y / m_distance );
 
 	UpdateParams();
-	
-	m_viewDirty = true;
 }
 
 void Camera::SetProj(float _angle, float _aspect, float _zn, float _zf)
@@ -42,8 +40,6 @@ void Camera::SetProj(float _angle, float _aspect, float _zn, float _zf)
 	m_aspect = _aspect;
 	m_zNear  = _zn;
 	m_zFar   = _zf;
-
-	m_projectionDirty = true;
 }
 
 void Camera::LookAt(glm::vec3 _at)
@@ -54,25 +50,21 @@ void Camera::LookAt(glm::vec3 _at)
 void Camera::SetAngle(const float _angle) noexcept
 {
 	m_angle = _angle;
-	m_projectionDirty = true;
 }
 
 void Camera::SetAspect(const float _aspect) noexcept
 {
 	m_aspect = _aspect;
-	m_projectionDirty = true;
 }
 
 void Camera::SetZNear(const float _zn) noexcept
 {
 	m_zNear = _zn;
-	m_projectionDirty = true;
 }
 
 void Camera::SetZFar(const float _zf) noexcept
 {
 	m_zFar = _zf;
-	m_projectionDirty = true;
 }
 
 void Camera::Update(float _deltaTime)
@@ -82,23 +74,6 @@ void Camera::Update(float _deltaTime)
 		glm::vec3 deltaPosition = ( m_goForward * m_forward + m_goRight * m_right + m_goUp * m_up ) * m_speed * _deltaTime;
 		m_eye += deltaPosition;
 		m_at += deltaPosition;
-		m_viewDirty = true;
-	}
-	if (m_viewDirty)
-	{
-		m_viewMatrix = glm::lookAt(m_eye, m_at, m_worldUp);
-	}
-
-	if (m_projectionDirty)
-	{
-		m_matProj = glm::perspective(m_angle, m_aspect, m_zNear, m_zFar);
-	}
-
-	if (m_viewDirty || m_projectionDirty)
-	{
-		m_matViewProj = m_matProj * m_viewMatrix;
-		m_viewDirty = false;
-		m_projectionDirty = false;
 	}
 }
 
@@ -129,7 +104,6 @@ void Camera::UpdateParams()
 	m_right = glm::normalize(glm::cross(lookDirection, m_worldUp));
 
 	m_forward = glm::cross(m_up, m_right);
-	m_viewDirty = true;
 }
 
 void Camera::SetSpeed(float _val)

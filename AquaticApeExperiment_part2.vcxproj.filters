@@ -70,30 +70,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Vert_PosNormTex.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_skybox.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Frag_skybox.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Frag_Lighting.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Frag_PosCol.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_axes.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_traj.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_water.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Frag_Metaball.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -102,14 +78,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\Suzanne.obj">
-      <Filter>Assets</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Assets\wood.jpg">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="Assets\zpos.png">
       <Filter>Assets</Filter>
     </Image>
@@ -128,27 +96,6 @@
     <Image Include="Assets\zneg.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\water_texture.jpg">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\lab_xneg.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\lab_xpos.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\lab_yneg.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\lab_ypos.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\lab_zneg.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\lab_zpos.png">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="Assets\chapel_xneg.jpg">
       <Filter>Assets</Filter>
     </Image>
@@ -165,6 +112,42 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\chapel_zpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_zpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_zpos.jpg">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

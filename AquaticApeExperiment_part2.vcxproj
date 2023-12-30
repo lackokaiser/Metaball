@@ -103,39 +103,32 @@
   <ItemGroup>
     <None Include="Frag_Metaball.frag" />
     <None Include="Vert_Metaball.vert" />
-    <None Include="Vert_PosNormTex.vert" />
-    <None Include="Vert_skybox.vert" />
-    <None Include="Frag_skybox.frag" />
-    <None Include="Frag_Lighting.frag" />
-    <None Include="Frag_PosCol.frag" />
-    <None Include="Vert_axes.vert" />
-    <None Include="Vert_traj.vert" />
-    <None Include="Vert_water.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\Suzanne.obj" />
-  </ItemGroup>
-  <ItemGroup>
+    <Image Include="Assets\bridge_xneg.jpg" />
+    <Image Include="Assets\bridge_xpos.jpg" />
+    <Image Include="Assets\bridge_yneg.jpg" />
+    <Image Include="Assets\bridge_ypos.jpg" />
+    <Image Include="Assets\bridge_zneg.jpg" />
+    <Image Include="Assets\bridge_zpos.jpg" />
     <Image Include="Assets\chapel_xneg.jpg" />
     <Image Include="Assets\chapel_xpos.jpg" />
     <Image Include="Assets\chapel_yneg.jpg" />
     <Image Include="Assets\chapel_ypos.jpg" />
     <Image Include="Assets\chapel_zneg.jpg" />
     <Image Include="Assets\chapel_zpos.jpg" />
-    <Image Include="Assets\wood.jpg" />
+    <Image Include="Assets\nightPark_xneg.jpg" />
+    <Image Include="Assets\nightPark_xpos.jpg" />
+    <Image Include="Assets\nightPark_yneg.jpg" />
+    <Image Include="Assets\nightPark_ypos.jpg" />
+    <Image Include="Assets\nightPark_zneg.jpg" />
+    <Image Include="Assets\nightPark_zpos.jpg" />
     <Image Include="Assets\zpos.png" />
     <Image Include="Assets\xneg.png" />
     <Image Include="Assets\xpos.png" />
     <Image Include="Assets\yneg.png" />
     <Image Include="Assets\ypos.png" />
     <Image Include="Assets\zneg.png" />
-    <Image Include="Assets\water_texture.jpg" />
-    <Image Include="Assets\lab_xneg.png" />
-    <Image Include="Assets\lab_xpos.png" />
-    <Image Include="Assets\lab_yneg.png" />
-    <Image Include="Assets\lab_ypos.png" />
-    <Image Include="Assets\lab_zneg.png" />
-    <Image Include="Assets\lab_zpos.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

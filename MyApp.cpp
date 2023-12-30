@@ -85,7 +85,7 @@ void CMyApp::InitGeometry()
 {
 	MeshObject<glm::vec2> quadGPU;
 	{
-		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Param(), 160, 160);
+		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Param(), 1, 1);
 		for (const Vertex& v : surfaceMeshCPU.vertexArray)
 		{
 			quadGPU.vertexArray.push_back(glm::vec2(2 * v.position.x - 1, 2 * v.position.y - 1));
@@ -115,12 +115,12 @@ void CMyApp::InitSkyboxTextures()
 	// skybox texture
 
 	glGenTextures( 1, &m_skyboxTextureID );
-	TextureFromFile( m_skyboxTextureID, "Assets/chapel_xpos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X );
-	TextureFromFile( m_skyboxTextureID, "Assets/chapel_xneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_X );
-	TextureFromFile( m_skyboxTextureID, "Assets/chapel_ypos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Y );
-	TextureFromFile( m_skyboxTextureID, "Assets/chapel_yneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y );
-	TextureFromFile( m_skyboxTextureID, "Assets/chapel_zpos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Z );
-	TextureFromFile( m_skyboxTextureID, "Assets/chapel_zneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
+	TextureFromFile( m_skyboxTextureID, "Assets/nightPark_xpos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X );
+	TextureFromFile( m_skyboxTextureID, "Assets/nightPark_xneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_X );
+	TextureFromFile( m_skyboxTextureID, "Assets/nightPark_ypos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Y );
+	TextureFromFile( m_skyboxTextureID, "Assets/nightPark_yneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y );
+	TextureFromFile( m_skyboxTextureID, "Assets/nightPark_zpos.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Z );
+	TextureFromFile( m_skyboxTextureID, "Assets/nightPark_zneg.jpg", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
 	SetupTextureSampling( GL_TEXTURE_CUBE_MAP, m_skyboxTextureID, false );
 
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -136,23 +136,7 @@ bool CMyApp::Init()
 	SetupDebugCallback();
 
 	// törlési szín legyen kékes
-	glClearColor(0.125f, 0.25f, 0.5f, 1.0f);
-	
-	// Nem minden driver támogatja a vonalak és pontok vastagabb megjelenítését, ezért
-	// lekérdezzük, hogy támogatott-e a GL_LINE_WIDTH_RANGE és GL_POINT_SIZE_RANGE tokenek.
-	{
-        // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glPointSize.xhtml
-        GLfloat pointSizeRange[2] = { 0.0f, 0.0f };
-        glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange); // lekérdezzük a támogatott pontméretek tartományát
-		glPointSize( std::min( 16.0f, pointSizeRange[ 1 ] ) ); // nagyobb pontok
-    }
-
-    {
-        // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glLineWidth.xhtml
-        GLfloat lineWidthRange[2] = { 0.0f, 0.0f };
-        glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange); // lekérdezzük a támogatott vonalvastagság tartományát
-		//glLineWidth( std::min( 4.0f, lineWidthRange[ 1 ] ) ); // vastagabb vonalak
-	}
+	glClearColor(0, 0, 0, 1);
 
 	InitShaders();
 	InitGeometry();
@@ -372,8 +356,8 @@ void CMyApp::RenderGUI()
 		if (currentItem < m_lights.GetSize() && currentItem != -1)
 		{
 			ImGui::SliderFloat3("Coords", glm::value_ptr(*m_lights.GetLightAt(currentItem)), -10, 10);
-			ImGui::ColorPicker3("Diffuse Color", glm::value_ptr(*m_lights.GetDiffuseAt(currentItem)));
-			ImGui::ColorPicker3("Specular Color", glm::value_ptr(*m_lights.GetSpecularAt(currentItem)));
+			ImGui::ColorEdit3("Diffuse Color", glm::value_ptr(*m_lights.GetDiffuseAt(currentItem)));
+			ImGui::ColorEdit3("Specular Color", glm::value_ptr(*m_lights.GetSpecularAt(currentItem)));
 		}
 	}
 	ImGui::End();

@@ -38,8 +38,6 @@ uniform float windowSizeY;
 
 uniform vec2 mousePos;
 
-mat4 viewProj;
-
 vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD);
 
 float fcr(vec3 p, vec3 c, float r) {
@@ -111,12 +109,29 @@ bool ApplyShadow(vec3 point, vec3 toLight, vec3 lightPos, float tMin){
 	return hitPoint.w != 0;
 }
 
+//vec3 BlinnPhong(vec3 lightStrength, vec3 L, vec3 N, vec3 V, Material mat)
+//{
+//    vec3 H = normalize(L+V);	// Half vector between View and Light vector
+//	
+//    float m = mat.shininess * 256.0;
+//    float roughnessFactor = ((m + 8.0)*pow(max(dot(H,N),0.0), m))/8.0;	// Controls how much smooth is the material, taking into account normalization for energy conservation    
+//	vec3 fresnelFactor = SchlickFresnel(mat.fresnelR0, H, L);
+//    vec3 specAlbedo = fresnelFactor*roughnessFactor;
+//    specAlbedo = specAlbedo / (specAlbedo + 1.0f);	// the formula goes outside [0,1]
+//    return (mat.diffuseAlbedo.rgb + specAlbedo) * lightStrength;
+//}
+
+vec3 SchlickFresnel(vec3 fresnelConst, vec3 halfVec, vec3 toLight){
+	float f0 = 1.0f - max(dot(halfVec, toLight), 0.0);
+    return fresnelConst + (1.0f - fresnelConst)*(pow(f0, 5));
+}
 
 // Blinn-Phong shading
 vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePosition){
 	
-	float smoothness = 20;
+	float shininess = 8;
 	float irradiance = .4;
+	float m = shininess * 256;
 
 
 	vec3 final = vec3( 0.0 );
@@ -125,22 +140,38 @@ vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePositio
 		vec3 diffColor = diffuseColors[i];
 		vec3 specColor = specularColors[i];
 		vec3 lightPos = lightPoses[i];
+		vec3 toLight = normalize(point - lightPos);
 
-		vec3 Kd = diffColor / PI;
-		vec3 Ks = specColor * ((smoothness + 8) / (PI * 8));
+		vec3 halfVec = normalize(lightPos + normalize(-rayDirection));
+
+		float smoothness = ((m + 8.0)*pow(max(dot(halfVec,pointNormal),0.0), m))/8.0;
 		
-		vec3 halfVec = normalize(lightPos + pointNormal);
+		vec3 fresnelFactor = SchlickFresnel(vec3(0), halfVec, toLight);
 
-		float cosTi = max(dot(pointNormal, lightPos), 0);
-		float cosTh = max(dot(pointNormal, halfVec), 0);
+		specColor += fresnelFactor * smoothness;
 
-		float lightDist = length(point - lightPos);
+		specColor /= specColor + 1;
+		
+		float lightDist = distance(point, lightPos);
 
-		float multiplier = 1 / (.5 + .8 * lightDist + .2 * lightDist * lightDist);
+		float multiplier = 1 / (.5 + .8 * lightDist + .5 * lightDist * lightDist);
 
 		if(!ApplyShadow(point, -normalize(lightPos - point), lightPos, .9))
-			final += (Kd + Ks * pow(cosTh, smoothness)) * multiplier * 2 * irradiance * cosTi;
+			final += (diffColor + specColor) * .5 * multiplier;
 
+//		float cosTi = max(dot(pointNormal, lightPos), 0);
+//		float cosTh = max(dot(pointNormal, halfVec), 0);
+//
+//		float lightDist = distance(point, lightPos);
+//
+//		float multiplier = 1 / (.5 + .8 * lightDist + .5 * lightDist * lightDist);
+//
+//		vec3 Kd = diffColor / PI;
+//		vec3 Ks = specColor * ((fresnelFactor * smoothness) / (PI * 8));
+//
+//		if(!ApplyShadow(point, -normalize(lightPos - point), lightPos, .9))
+//			final += (Kd + Ks * pow(cosTh, smoothness) * fresnelFactor) * multiplier * 3 * irradiance * cosTi;
+//
 //		vec3 lightPos = lightPoses[i];
 //		vec3 light_color = vec3( 0.5 );
 //
@@ -240,7 +271,7 @@ vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // bina
 
 	float pixel = .0005f; 
 
-	const int maxLevel = 18;
+	const int maxLevel = 10;
 
 	while (true){
 		float tle = (maxD - minD) * exp2(-float(level));
@@ -290,12 +321,12 @@ vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // bina
 //	return view1 * view2;
 //}
 
-mat4 CalculatePerspectiveMatrix(){
-	return mat4(1 / aspect * tan(angle / 2), 0, 0, 0,
-				0, 1 / tan(angle / 2), 0, 0,
-				0, 0, -(far + near)/(far - near), -(2*near*far)/(far - near),
-				0, 0, -1, 0);
-}
+//mat4 CalculatePerspectiveMatrix(){
+//	return mat4(1 / aspect * tan(angle / 2), 0, 0, 0,
+//				0, 1 / tan(angle / 2), 0, 0,
+//				0, 0, -(far + near)/(far - near), -(2*near*far)/(far - near),
+//				0, 0, -1, 0);
+//}
 //
 //mat4 CalculateViewProjectionMatrix(){
 //	mat4 viewMat = CalculateViewMatrix();
@@ -310,16 +341,17 @@ mat4 CalculatePerspectiveMatrix(){
 //    return normalize(vec3(xy, -z));
 //}
 
-vec3 DefaultRayDirection(vec2 uv, vec2 size, float fov){
-	vec2 pos = uv - size * .5;
-
-	float fovHalf = radians(tan((90 - fov * .5)));
-	float z = size.y * .5 * fovHalf;
-
-	return normalize(vec3(pos, -z));
-}
-
+//vec3 DefaultRayDirection(vec2 uv, vec2 size, float fov){
+//	vec2 pos = uv - size * .5;
+//
+//	float fovHalf = radians(tan((90 - fov * .5)));
+//	float z = size.y * .5 * fovHalf;
+//
+//	return normalize(vec3(pos, -z));
+//}
+//
 vec3 RayDirection(vec2 uv, vec3 rayOrigin, vec3 lookat, float zoom, float fov){
+	vec2 newUv = vec2(uv.x * 2, uv.y * 2 * radians(tan((90 - fov * .5))));
 	vec3 forward = normalize(lookat - rayOrigin);
 	vec3 right = normalize(cross(up, forward));
 	vec3 up = normalize(cross(right, forward));
@@ -327,13 +359,13 @@ vec3 RayDirection(vec2 uv, vec3 rayOrigin, vec3 lookat, float zoom, float fov){
 
 	vec3 center = forward * zoom;
 
-	vec3 intersect = center + uv.x * right + uv.y * up;
+	vec3 intersect = center + newUv.x * right + newUv.y * up;
 
 	return normalize(vec3(intersect));
 }
 
 mat2 RotationMX( float angle ) {
-	float s = sin(angle), c = cos(angle);
+	float s = sin(angle * eye.x), c = cos(angle);
 
 	return mat2(c, -s, s, c);
 }
@@ -343,9 +375,9 @@ void main(){
 
 	vec2 clampedMouse = vec2(mousePos.x, clamp(mousePos.y, 0, 3.14));
 	vec3 ro = eye;
-    
-	ro.yz *= RotationMX(clampedMouse.y * 3.14);
-	ro.xz *= RotationMX(clampedMouse.x * 2 * 3.14);
+//    
+//	ro.yz *= RotationMX(clampedMouse.y * 3.14);
+//	ro.xz *= RotationMX(clampedMouse.x * 2 * 3.14);
 
 	vec3 rd = RayDirection(coord, ro, up, 2.3, 45);
 

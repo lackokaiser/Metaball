@@ -81,22 +81,6 @@ protected:
 	// uniform location lekérdezése
 	GLint ul( const char* uniformName ) noexcept;
 
-	// shaderekhez szükséges változók
-	// Fényforrás- ...
-	
-	glm::vec3 m_La = glm::vec3( 0.125f );
-	glm::vec3 m_Ld = glm::vec3(1.0, 1.0, 1.0 );
-	glm::vec3 m_Ls = glm::vec3(1.0, 1.0, 1.0 );
-
-	float m_lightConstantAttenuation    = 1.0;
-	float m_lightLinearAttenuation      = 0.0;
-	float m_lightQuadraticAttenuation   = 0.0;
-
-	// ... és anyagjellemzők
-	glm::vec3 m_Ka = glm::vec3( 1.0 );
-	glm::vec3 m_Kd = glm::vec3( 1.0 );
-	glm::vec3 m_Ks = glm::vec3( 1.0 );
-
 	// Shaderek inicializálása, és törtlése
 	void InitShaders();
 	void CleanShaders();	

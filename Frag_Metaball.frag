@@ -232,7 +232,7 @@ vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // bina
 vec3 RayDirection(vec2 uv, vec3 rayOrigin, vec3 lookat, float zoom, float fov){
 
 	// NO DISTORTION ON SCREEN
-	vec2 newUv = vec2(uv.x * 2, uv.y * 2 * radians(tan((90 - fov * .5))));
+	vec2 newUv = vec2(uv.x, uv.y * radians(tan((90 - fov * .5))));
 	vec3 forward = normalize(lookat - rayOrigin);
 	vec3 right = normalize(cross(up, forward));
 	vec3 up = normalize(cross(right, forward));

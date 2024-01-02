@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="MyApp.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="includes\Camera.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\GLUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\SDL_GLDebugMessageCallback.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\ObjParser.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyApp.h" />
+    <ClInclude Include="includes\Camera.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\GLUtils.hpp">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\ParametricSurfaceMesh.hpp">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\SDL_GLDebugMessageCallback.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\ObjParser.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\bridge_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\bridge_zpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\miracoli_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\miracoli_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\miracoli_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\miracoli_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\miracoli_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\miracoli_zpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\nightPark_zpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\yokohama_xneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\yokohama_xpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\yokohama_yneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\yokohama_ypos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\yokohama_zneg.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\yokohama_zpos.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vert_Metaball.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Frag_Metaball.frag">
+      <Filter>Shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{6bf85091-79fb-4de3-9de1-51c743189eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{3bc67c73-2d8e-4c98-a3a1-112b4d6362ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{c4cf47bc-6872-4a99-ae46-8eccd9fc6094}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -163,8 +163,8 @@ bool CMyApp::Init()
 	m_metaBalls.push_back(glm::vec4(1, -1, 0, 1.9));
 	m_metaBalls.push_back(glm::vec4(1, -2, 3, 1.9));
 
-	m_lights.AddLight(glm::vec3(1, 1, 2), glm::vec3(1, 0, 0), glm::vec3(.5));
-	m_lights.AddLight(-glm::vec3(2, 1, 1), glm::vec3(0, 0, 1), glm::vec3(.5));
+	m_lights.AddLight(glm::vec3(1, 5, 2), glm::vec3(.5), glm::vec3(1, 0, 0));
+	m_lights.AddLight(-glm::vec3(2, 5, 1), glm::vec3(.5), glm::vec3(0, 0, 1));
 
 	return true;
 }
@@ -303,11 +303,6 @@ void CMyApp::RenderGUI()
 				m_metaBalls.erase(m_metaBalls.begin() + currentItem ); // Iterátoron keresztül tudjuk törölni a kijelölt elemet
 				currentItem = -1; // Törölve lett a kijelölés
 			}
-		}
-
-		if ( currentItem < m_metaBalls.size() && currentItem != -1 ) // currentItem valid index?
-		{
-			ImGui::SliderFloat3("Coords", glm::value_ptr(m_metaBalls[currentItem]), -10, 10);
 		}
 	}
 	ImGui::End();

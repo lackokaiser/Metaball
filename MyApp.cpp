@@ -57,30 +57,6 @@ struct Param
     }
 };
 
-struct Water
-{
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-		glm::vec3 pos = glm::vec3(-10.0, 0.0, 10.0) + glm::vec3( 20.0, 0.0, -20.0) * glm::vec3(u, 0.0, v);
-		pos.y = sinf(pos.z);
-
-		return pos;
-	}
-
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
-		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return glm::normalize(glm::cross(du, dv));
-	}
-
-	glm::vec2 GetTex( float u, float v ) const noexcept
-	{
-        return glm::vec2(u, v);
-    }
-};
-
 void CMyApp::InitGeometry()
 {
 	MeshObject<glm::vec2> quadGPU;

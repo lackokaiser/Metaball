@@ -79,7 +79,7 @@ float F(vec3 p){
 /// NORMAL
 
 vec3 CalculateNormal(vec3 hitPoint){
-	vec3 e = vec3(0.002f, 0.0, 0.0);
+	vec2 e = vec2(0.0001f, 0.0);
 
 	float x = F(hitPoint + e.xyy) - F(hitPoint - e.xyy);
 	float y = F(hitPoint + e.yxy) - F(hitPoint - e.yxy);
@@ -97,9 +97,6 @@ bool ApplyShadow(vec3 point, vec3 toLight, vec3 lightPos, float tMin){
 	float dist = tMin;
 
 	float max_Distance = distance(point, lightPos);
-//
-//	if(degrees(dot(toLight, normal)) > 90)
-//		return false;
 	
 	vec4 hitPoint = RayMarch(point, toLight, .3, max_Distance);
 
@@ -109,7 +106,7 @@ bool ApplyShadow(vec3 point, vec3 toLight, vec3 lightPos, float tMin){
 // LIGHTING
 
 // Blinn-Phong Shading
-vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePosition){
+vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 eyePosition){
 	
 	float shininess = 2;
 	vec3 final = vec3( 0.0 );
@@ -146,7 +143,7 @@ vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePositio
 vec4 CalculateColor(vec3 hitPoint, vec3 rayDirection, vec3 startPoint, int maxReflect){
 	vec3 norm = CalculateNormal(hitPoint);
 
-	vec3 light = ApplyLight(hitPoint, norm, rayDirection, startPoint);
+	vec3 light = ApplyLight(hitPoint, norm, startPoint);
 
 
 	// EXTRA: REFLECT SELF
@@ -167,7 +164,7 @@ vec4 CalculateColor(vec3 hitPoint, vec3 rayDirection, vec3 startPoint, int maxRe
 
 		refNorm = CalculateNormal(refHitPoint.xyz);
 
-		vec3 reflectedLight = ApplyLight(refHitPoint.xyz, refNorm, refRd, refStartPoint);
+		vec3 reflectedLight = ApplyLight(refHitPoint.xyz, refNorm, refStartPoint);
 		
 		reflectedLight += texture(cubeMap, -refRd).rgb;
 
@@ -187,26 +184,27 @@ vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD) { // bina
 	int segment = 0;
 
 	// approximation
-	float pixel = .0005f; 
+	const float pixel = .0005f; 
 
 	// max depth
-	const int maxLevel = 10;
+	const int maxLevel = 18;
 
 	while (true){
 
 		// binary search : At the middle
-		float tle = (maxD - minD) * exp2(-float(level));
-		float tce = minD + tle * (float(segment)+.5f);
+		float levelD = (maxD - minD) * exp2(-level);
+		float centerD = minD + levelD * (segment+.5f);
 		
-		float tra = tle * .5f;
+		float radiusD = levelD * .5f;
 
 		// point 
-		vec3 point = startPoint + tce * normalDir; 
+		vec3 point = startPoint + centerD * normalDir; 
 
+		// check against the SDF
 		float d = F(point);
 
-		if(d >= -tra){
-			if(tra < tce * pixel || level > maxLevel){
+		if(d >= -radiusD){ // if found
+			if(radiusD < centerD * pixel || level > maxLevel){ // check approximation
 				return vec4(point, 1);
 			}
 			else {
@@ -240,7 +238,7 @@ vec3 RayDirection(vec2 uv, vec3 rayOrigin, vec3 lookat, float zoom, float fov){
 
 	vec3 intersect = center + newUv.x * right + newUv.y * up;
 
-	return normalize(vec3(intersect));
+	return normalize(intersect);
 }
 
 void main(){

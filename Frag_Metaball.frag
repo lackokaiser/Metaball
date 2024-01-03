@@ -43,13 +43,26 @@ vec4 RayMarch(vec3 startPoint, vec3 normalDir, float minD, float maxD);
 float fcr(vec3 p, vec3 c, float r) {
 	float d = distance(c, p) / r;
 
-	if (d < 0)
-		return 1; // completely inside
+	// this part must be commented out for the 5th function
+	if (d < 0) 
+		return 1;  //completely inside
 	else if (d > 1)
-		return 0; // outside 0
+		return 0;  //outside 0
+
+	float f = 2 * pow(d, 3.f) - 3.f * pow(d, 2.f) + 1; // 1st function // described by assignment
+	//float f = 1 - 3 * pow(d, 2) + 3 * pow(d, 4) - pow(d, 6); // 2nd function // Pixar's RenderMan
+	//float f = 1 - 6 * pow(d, 5) + 15 * pow(d, 4) - 10 * pow(d, 3); // 3rd function // John Hart
+	/*
+	float f = 0; // 4th function // Links (piecewise polynomial)
+	if(d < 1.f/3.f)
+		f = 1 - 3 * d * d;
+	else if(d < 1)
+		f = 1.5f * pow(1 - d, 2); 
+	*/
+	//float f = 1 / pow(d, 2); // 5th function // only works if conditions are deleted above
 	
-	float f = 2 * pow(d, 3.f) - 3.f * pow(d, 2.f) + 1;
-	return f; // on surface
+	
+	return f;
 }
 
 float F(vec3 p){
@@ -95,11 +108,6 @@ bool ApplyShadow(vec3 point, vec3 toLight, vec3 lightPos, float tMin){
 
 // LIGHTING
 
-vec3 SchlickFresnel(vec3 fresnelConst, vec3 halfVec, vec3 toLight){
-	float f0 = 1.0f - max(dot(halfVec, toLight), 0.0);
-    return fresnelConst + (1.0f - fresnelConst)*(pow(f0, 5));
-}
-
 // Blinn-Phong Shading
 vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePosition){
 	
@@ -129,16 +137,6 @@ vec3 ApplyLight(vec3 point, vec3 pointNormal, vec3 rayDirection, vec3 eyePositio
 
 		if(!ApplyShadow(point, -toLight, lightPos, .1))
 			final += (ambient + diffuse + specular);
-//		vec3 halfVec = normalize(lightPos + normalize(-rayDirection));
-//
-//		float smoothness = ((m + 8.0)*pow(max(dot(halfVec,pointNormal),0.0), shininess))/8.0;
-//		
-//		vec3 fresnelFactor = SchlickFresnel(vec3(.2), halfVec, toLight);
-//
-//		specColor += fresnelFactor * smoothness;
-//
-//		specColor /= specColor + 1;
-//		
 
 	}
 

@@ -87,7 +87,7 @@ vec3 CalculateNormal(vec3 hitPoint){
 
 	vec3 res = vec3(x, y, z) / (2*e.x);
 
-	return normalize(res);
+	return -normalize(res);
 }
 
 // SHADOW
